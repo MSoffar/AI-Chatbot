@@ -134,7 +134,7 @@ def process_input():
 
         # Get model response
         try:
-            completion = openai.ChatCompletion.create(
+            completion = openai.chat.completions.create(
                 model="ft:gpt-4o-mini-2024-07-18:mcc-4::9r6ZXXKU",
                 messages=st.session_state.messages
             )
@@ -178,7 +178,7 @@ def handle_quick_question(user_message):
 
     # Get model response
     try:
-        completion = openai.ChatCompletion.create(
+        completion = openai.chat.completions.create(
             model="ft:gpt-4o-mini-2024-07-18:mcc-4::9r6ZXXKU",
             messages=st.session_state.messages
         )
