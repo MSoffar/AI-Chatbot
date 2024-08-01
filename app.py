@@ -142,7 +142,7 @@ def process_input():
         st.session_state.input_text = ""
 
 # User input with a placeholder
-st.text_input(placeholder="Type your message here...", key="input_text")
+st.text_input("Chat Input",placeholder="Type your message here...", key="input_text")
 
 # Send button to process input
 if st.button("Send"):
