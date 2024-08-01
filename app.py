@@ -106,11 +106,11 @@ chat_placeholder = st.empty()
 # Display initial chat history
 chat_placeholder.markdown(assemble_chat(st.session_state.messages))
 
-# Function to process user input and reset the input field
-def process_input():
-    if st.session_state.user_input.strip():
+# Function to process user input
+def process_input(user_input):
+    if user_input.strip():
         # Add user message to the conversation history
-        st.session_state.messages.append({"role": "user", "content": st.session_state.user_input})
+        st.session_state.messages.append({"role": "user", "content": user_input})
 
         # Update chat history with the user's message
         chat_placeholder.markdown(assemble_chat(st.session_state.messages))
@@ -137,16 +137,12 @@ def process_input():
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
-        # Reset the input field
-        st.session_state.user_input = ""
-
 # User input with a placeholder
-user_input_placeholder = st.empty()
-user_input = user_input_placeholder.text_input("Enter your message:", placeholder="Type your message here...", key="user_input")
+user_input = st.text_input("Enter your message:", placeholder="Type your message here...")
 
 # Send button to process input
 if st.button("Send"):
-    process_input()
+    process_input(user_input)
 
 # Function to handle quick questions
 def handle_quick_question(user_message):
@@ -209,3 +205,11 @@ st.sidebar.markdown(
     """
 )
 
+# Feedback mechanism
+st.sidebar.markdown("### Feedback")
+feedback = st.sidebar.text_area("We'd love to hear your feedback:")
+if st.sidebar.button("Submit Feedback"):
+    if feedback:
+        st.sidebar.success("Thank you for your feedback!")
+    else:
+        st.sidebar.error("Please enter your feedback before submitting.")
