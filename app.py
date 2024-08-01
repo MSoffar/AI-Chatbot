@@ -1,3 +1,4 @@
+
 import streamlit as st
 import openai
 import time
@@ -122,7 +123,7 @@ chat_placeholder = st.empty()
 # Display initial chat history
 chat_placeholder.markdown(assemble_chat(st.session_state.messages))
 
-# Function to process user input
+# Function to process user input and reset the input field
 def process_input():
     user_input = st.session_state.user_input.strip()
     if user_input:
@@ -157,16 +158,8 @@ def process_input():
         # Reset the input field
         st.session_state.user_input = ""
 
-# Using a form for user input
-with st.form(key='chat_form', clear_on_submit=True):
-    col1, col2 = st.columns([6, 1])
-    with col1:
-        user_input = st.text_input("", placeholder="Type your message here...", key="user_input")
-    with col2:
-        submit_button = st.form_submit_button("Send")
-
-    if submit_button:
-        process_input()
+# User input with a placeholder only (no label)
+st.text_input("", placeholder="Type your message here...", key="user_input", on_change=process_input)
 
 # Function to handle quick questions
 def handle_quick_question(user_message):
