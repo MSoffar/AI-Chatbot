@@ -156,8 +156,16 @@ def process_input():
         # Reset the input field
         st.session_state.user_input = ""
 
-# User input with a placeholder only (no label)
-st.text_input("", placeholder="Type your message here...", key="user_input", on_change=process_input)
+# Use a form with a "Send" button
+with st.form(key='chat_form', clear_on_submit=True):
+    user_input_col, send_button_col = st.columns([6, 1])
+    with user_input_col:
+        user_input = st.text_input("", placeholder="Type your message here...", key="user_input")
+    with send_button_col:
+        submit_button = st.form_submit_button("Send")
+
+    if submit_button:
+        process_input()
 
 # Function to handle quick questions
 def handle_quick_question(user_message):
