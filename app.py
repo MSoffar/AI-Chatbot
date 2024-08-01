@@ -106,9 +106,9 @@ chat_placeholder = st.empty()
 # Display initial chat history
 chat_placeholder.markdown(assemble_chat(st.session_state.messages))
 
-# Function to process user input and reset the input field
-def process_input():
-    user_input = st.session_state.user_input.strip()
+# Add a send button and user input field
+user_input = st.text_input("", placeholder="Type your message here...", key="user_input")
+if st.button("Send"):
     if user_input:
         # Add user message to the conversation history
         st.session_state.messages.append({"role": "user", "content": user_input})
@@ -138,15 +138,8 @@ def process_input():
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
-        # Reset the input field
+        # Clear the user input
         st.session_state.user_input = ""
-
-# User input with a placeholder only (no label)
-st.text_input("", placeholder="Type your message here...", key="user_input")
-
-# Add a send button
-if st.button("Send"):
-    process_input()
 
 # Function to handle quick questions
 def handle_quick_question(user_message):
