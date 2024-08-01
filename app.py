@@ -27,10 +27,6 @@ know more about this, please visit maids.cc/support".
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "system", "content": role_description}]
 
-# Add a flag to track when the input is being processed
-if "is_processing" not in st.session_state:
-    st.session_state.is_processing = False
-
 # Function to simulate typing effect
 def simulate_typing(response_text, chat_placeholder, delay=0.03):
     typed_text = ""
@@ -111,20 +107,16 @@ chat_placeholder = st.empty()
 chat_placeholder.markdown(assemble_chat(st.session_state.messages))
 
 # Function to process user input and reset the input field after processing
-def process_input():
-    user_input = st.session_state.user_input.strip()
-    if user_input:
+def process_input(user_question):
+    if user_question:
         # Add user message to the conversation history
-        st.session_state.messages.append({"role": "user", "content": user_input})
+        st.session_state.messages.append({"role": "user", "content": user_question})
 
         # Update chat history with the user's message
         chat_placeholder.markdown(assemble_chat(st.session_state.messages))
 
         # Get model response
         try:
-            # Set the processing flag to True
-            st.session_state.is_processing = True
-
             completion = openai.chat.completions.create(
                 model="ft:gpt-4o-mini-2024-07-18:mcc-4::9r6ZXXKU",
                 messages=st.session_state.messages
@@ -145,17 +137,14 @@ def process_input():
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
-        finally:
-            # Reset the processing flag and the input field after the response is processed
-            st.session_state.is_processing = False
-            st.session_state.user_input = ""
+# Use a form for user input
+with st.form(key='user_input_form'):
+    user_question = st.text_input("", placeholder="Type your message here...", key="temp_user_question")
+    submit_button = st.form_submit_button(label='Send')
 
-# User input with a placeholder only (no label)
-st.text_input("", placeholder="Type your message here...", key="user_input")
-
-# Send button to process input
-if st.button("Send") and not st.session_state.is_processing:
-    process_input()
+    if submit_button and st.session_state["temp_user_question"]:
+        process_input(st.session_state["temp_user_question"])
+        st.session_state["temp_user_question"] = None  # Clear the input field after submission
 
 # Function to handle quick questions
 def handle_quick_question(user_message):
