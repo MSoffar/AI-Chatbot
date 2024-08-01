@@ -27,6 +27,10 @@ know more about this, please visit maids.cc/support".
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "system", "content": role_description}]
 
+# Add a flag to track when the input is being processed
+if "is_processing" not in st.session_state:
+    st.session_state.is_processing = False
+
 # Function to simulate typing effect
 def simulate_typing(response_text, chat_placeholder, delay=0.03):
     typed_text = ""
@@ -106,7 +110,7 @@ chat_placeholder = st.empty()
 # Display initial chat history
 chat_placeholder.markdown(assemble_chat(st.session_state.messages))
 
-# Function to process user input and reset the input field
+# Function to process user input and reset the input field after processing
 def process_input():
     user_input = st.session_state.user_input.strip()
     if user_input:
@@ -118,6 +122,9 @@ def process_input():
 
         # Get model response
         try:
+            # Set the processing flag to True
+            st.session_state.is_processing = True
+
             completion = openai.chat.completions.create(
                 model="ft:gpt-4o-mini-2024-07-18:mcc-4::9r6ZXXKU",
                 messages=st.session_state.messages
@@ -138,11 +145,17 @@ def process_input():
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
-        # Reset the input field
-        st.session_state.user_input = ""
+        finally:
+            # Reset the processing flag and the input field after the response is processed
+            st.session_state.is_processing = False
+            st.session_state.user_input = ""
 
 # User input with a placeholder only (no label)
-st.text_input("", placeholder="Type your message here...", key="user_input", on_change=process_input)
+st.text_input("", placeholder="Type your message here...", key="user_input")
+
+# Send button to process input
+if st.button("Send") and not st.session_state.is_processing:
+    process_input()
 
 # Function to handle quick questions
 def handle_quick_question(user_message):
