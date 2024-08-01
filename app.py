@@ -142,7 +142,11 @@ def process_input():
         st.session_state.user_input = ""
 
 # User input with a placeholder only (no label)
-st.text_input("", placeholder="Type your message here...", key="user_input", on_change=process_input)
+st.text_input("", placeholder="Type your message here...", key="user_input")
+
+# Add a send button
+if st.button("Send"):
+    process_input()
 
 # Function to handle quick questions
 def handle_quick_question(user_message):
