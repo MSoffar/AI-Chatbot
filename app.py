@@ -27,6 +27,10 @@ know more about this, please visit maids.cc/support".
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "system", "content": role_description}]
 
+# Ensure input field is in session state
+if "user_input" not in st.session_state:
+    st.session_state.user_input = ""
+
 # Function to simulate typing effect
 def simulate_typing(response_text, chat_placeholder, delay=0.03):
     typed_text = ""
@@ -107,10 +111,11 @@ chat_placeholder = st.empty()
 chat_placeholder.markdown(assemble_chat(st.session_state.messages))
 
 # Function to process user input and reset the input field after processing
-def process_input(user_question):
-    if user_question:
+def process_input():
+    user_input = st.session_state.user_input.strip()
+    if user_input:
         # Add user message to the conversation history
-        st.session_state.messages.append({"role": "user", "content": user_question})
+        st.session_state.messages.append({"role": "user", "content": user_input})
 
         # Update chat history with the user's message
         chat_placeholder.markdown(assemble_chat(st.session_state.messages))
@@ -137,14 +142,16 @@ def process_input(user_question):
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
-# Use a form for user input
-with st.form(key='user_input_form'):
-    user_question = st.text_input("", placeholder="Type your message here...", key="temp_user_question")
-    submit_button = st.form_submit_button(label='Send')
+        finally:
+            # Reset the input field after the response is processed
+            st.session_state.user_input = ""
 
-    if submit_button and st.session_state["temp_user_question"]:
-        process_input(st.session_state["temp_user_question"])
-        st.session_state["temp_user_question"] = None  # Clear the input field after submission
+# User input with a placeholder only (no label)
+st.text_input("", placeholder="Type your message here...", key="user_input")
+
+# Send button to process input
+if st.button("Send"):
+    process_input()
 
 # Function to handle quick questions
 def handle_quick_question(user_message):
