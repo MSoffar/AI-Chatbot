@@ -26,6 +26,8 @@ know more about this, please visit maids.cc/support".
 # Initialize conversation history
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "system", "content": role_description}]
+if "user_input" not in st.session_state:
+    st.session_state.user_input = ""
 
 # Function to simulate typing effect
 def simulate_typing(response_text, chat_placeholder, delay=0.03):
@@ -137,12 +139,15 @@ def process_input(user_input):
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
 
+        # Reset the input field
+        st.session_state.user_input = ""
+
 # User input with a placeholder
-user_input = st.text_input("Enter your message:", placeholder="Type your message here...")
+user_input = st.text_input("Enter your message:", placeholder="Type your message here...", key="user_input")
 
 # Send button to process input
 if st.button("Send"):
-    process_input(user_input)
+    process_input(st.session_state.user_input)
 
 # Function to handle quick questions
 def handle_quick_question(user_message):
@@ -204,12 +209,3 @@ st.sidebar.markdown(
     - Visit [maids.cc/support](https://maids.cc/support) for further assistance.
     """
 )
-
-# Feedback mechanism
-st.sidebar.markdown("### Feedback")
-feedback = st.sidebar.text_area("We'd love to hear your feedback:")
-if st.sidebar.button("Submit Feedback"):
-    if feedback:
-        st.sidebar.success("Thank you for your feedback!")
-    else:
-        st.sidebar.error("Please enter your feedback before submitting.")
