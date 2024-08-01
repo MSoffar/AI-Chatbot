@@ -104,6 +104,7 @@ st.markdown(
         border-radius: 20px;
         padding: 2px 15px;
     }
+
     </style>
     """,
     unsafe_allow_html=True
@@ -121,7 +122,7 @@ chat_placeholder = st.empty()
 # Display initial chat history
 chat_placeholder.markdown(assemble_chat(st.session_state.messages))
 
-# Function to process user input and reset the input field
+# Function to process user input
 def process_input():
     user_input = st.session_state.user_input.strip()
     if user_input:
@@ -133,7 +134,7 @@ def process_input():
 
         # Get model response
         try:
-            completion = openai.chat.completions.create(
+            completion = openai.ChatCompletion.create(
                 model="ft:gpt-4o-mini-2024-07-18:mcc-4::9r6ZXXKU",
                 messages=st.session_state.messages
             )
@@ -156,12 +157,12 @@ def process_input():
         # Reset the input field
         st.session_state.user_input = ""
 
-# Use a form with a "Send" button
+# Using a form for user input
 with st.form(key='chat_form', clear_on_submit=True):
-    user_input_col, send_button_col = st.columns([6, 1])
-    with user_input_col:
+    col1, col2 = st.columns([6, 1])
+    with col1:
         user_input = st.text_input("", placeholder="Type your message here...", key="user_input")
-    with send_button_col:
+    with col2:
         submit_button = st.form_submit_button("Send")
 
     if submit_button:
@@ -177,7 +178,7 @@ def handle_quick_question(user_message):
 
     # Get model response
     try:
-        completion = openai.chat.completions.create(
+        completion = openai.ChatCompletion.create(
             model="ft:gpt-4o-mini-2024-07-18:mcc-4::9r6ZXXKU",
             messages=st.session_state.messages
         )
